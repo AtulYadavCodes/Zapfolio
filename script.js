@@ -42,6 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 1. Click Listener
     uploadZone.addEventListener('click', () => {
+        // Allow re-selecting the same file after back/forward or cancel
+        fileInput.value = '';
         fileInput.click();
     });
 
@@ -236,32 +238,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- ACTIONS ---
+    function resetUploadState() {
+        viewEditor.classList.add('hidden');
+        viewLanding.classList.remove('hidden');
+        fileInput.value = ''; // Reset input
+
+        // Reset upload zone styling
+        uploadZone.classList.remove('drag-active');
+
+        // Clear terminal logs
+        if (terminalLogs) terminalLogs.innerHTML = '';
+
+        // Reset progress bar
+        if (progressFill) progressFill.style.width = '0%';
+
+        // Reset file name display
+        if (fileNameDisplay) fileNameDisplay.innerText = 'file.pdf';
+
+        // Reset code variable and backend flag
+        code = '';
+        backendComplete = false;
+
+        // Scroll to top
+        window.scrollTo(0, 0);
+    }
+
     if (btnClose) {
         btnClose.addEventListener('click', () => {
-            viewEditor.classList.add('hidden');
-            viewLanding.classList.remove('hidden');
-            fileInput.value = ''; // Reset input
-            
-            // Reset upload zone styling
-            uploadZone.classList.remove('drag-active');
-            
-            // Clear terminal logs
-            if (terminalLogs) terminalLogs.innerHTML = '';
-            
-            // Reset progress bar
-            if (progressFill) progressFill.style.width = '0%';
-            
-            // Reset file name display
-            if (fileNameDisplay) fileNameDisplay.innerText = 'file.pdf';
-            
-            // Reset code variable and backend flag
-            code = '';
-            backendComplete = false;
-            
-            // Scroll to top
-            window.scrollTo(0, 0);
+            resetUploadState();
         });
     }
+
+    // Handle browser back/forward cache restore
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            resetUploadState();
+        }
+    });
 
     if (btnDeploy) {
         btnDeploy.addEventListener('click', () => {
