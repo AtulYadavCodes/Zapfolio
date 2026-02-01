@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             index++;
-        }, 600);
+        }, 1000);
     }
 
     function checkBackendAndNavigate() {
